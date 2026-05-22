@@ -1,0 +1,26 @@
+name: Server CI
+
+on:
+  push:
+    paths:
+      - 'server/**'
+  pull_request:
+    paths:
+      - 'server/**'
+
+jobs:
+  build:
+    uses: negretenico/GithubWorkflows/.github/workflows/java_maven_build.yaml@main
+    with:
+      working_directory: server
+      artifact_name: server-jar
+    secrets: inherit
+
+  docker:
+    needs: build
+    uses: negretenico/GithubWorkflows/.github/workflows/docker_build.yaml@main
+    with:
+      working_directory: server
+      service_name: server
+      artifact_name: server-jar
+    secrets: inherit
