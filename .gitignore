@@ -1,0 +1,54 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.eggs/
+venv/
+.venv/
+env/
+**/target/
+.evidence/
+# Environment / secrets
+.env
+.env.*
+config/secrets.yaml
+config/keys.yaml
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Node / Bun
+node_modules/
+npm-debug.log*
+.bun/
+bun.lockb
+
+# Java / Maven
+*.class
+*.jar
+!**/mvnw
+!**/.mvn/wrapper/maven-wrapper.jar
+hs_err_pid*
+
+# Next.js
+frontend/.next/
+frontend/out/
+frontend/dist/
+
+# AI agent tooling (local only — skills-lock.json and SKILL.md are committed, not these)
+.agents/
+.claude/
+data/*
