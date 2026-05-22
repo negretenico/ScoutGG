@@ -1,0 +1,146 @@
+[
+  {
+    "id": "fly",
+    "name": "FlyQuest",
+    "abbreviation": "FLY",
+    "record": { "wins": 11, "losses": 3 },
+    "narrativeHook": "The team nobody picked to win is now the team nobody wants to play. Believe the hype.",
+    "roster": [
+      { "id": "inspired", "name": "Inspired", "role": "Jungle" },
+      { "id": "licorice", "name": "Licorice", "role": "Top" },
+      { "id": "quad", "name": "Quad", "role": "Mid" },
+      { "id": "prince", "name": "Prince", "role": "Bot" },
+      { "id": "busio", "name": "Busio", "role": "Support" }
+    ],
+    "unsungHero": {
+      "playerId": "busio",
+      "reason": "Busio's vision control is the silent engine behind FlyQuest's dominant early games — rarely highlighted, always essential."
+    }
+  },
+  {
+    "id": "c9",
+    "name": "Cloud9",
+    "abbreviation": "C9",
+    "record": { "wins": 10, "losses": 4 },
+    "narrativeHook": "The perennial contenders finding their rhythm again — dangerous when underestimated.",
+    "roster": [
+      { "id": "blaber", "name": "Blaber", "role": "Jungle" },
+      { "id": "fudge", "name": "Fudge", "role": "Top" },
+      { "id": "jojopyun", "name": "jojopyun", "role": "Mid" },
+      { "id": "berserker", "name": "Berserker", "role": "Bot" },
+      { "id": "zven", "name": "Zven", "role": "Support" }
+    ],
+    "unsungHero": {
+      "playerId": "fudge",
+      "reason": "Fudge absorbs pressure in the top lane so the rest of Cloud9 can play free — an unselfish carry in disguise."
+    }
+  },
+  {
+    "id": "tl",
+    "name": "Team Liquid",
+    "abbreviation": "TL",
+    "record": { "wins": 9, "losses": 5 },
+    "narrativeHook": "Built to win on paper, still searching for the fire that turns rosters into champions.",
+    "roster": [
+      { "id": "umti", "name": "Umti", "role": "Jungle" },
+      { "id": "impact", "name": "Impact", "role": "Top" },
+      { "id": "abbey", "name": "APA", "role": "Mid" },
+      { "id": "yeon", "name": "Yeon", "role": "Bot" },
+      { "id": "corejj", "name": "CoreJJ", "role": "Support" }
+    ],
+    "unsungHero": {
+      "playerId": "corejj",
+      "reason": "CoreJJ doesn't win games — he stops them from being lost. His positioning is a masterclass the broadcast rarely stops to explain."
+    }
+  },
+  {
+    "id": "100t",
+    "name": "100 Thieves",
+    "abbreviation": "100T",
+    "record": { "wins": 8, "losses": 6 },
+    "narrativeHook": "A mid-season reinvention that nobody saw coming — now playing their best League of the year.",
+    "roster": [
+      { "id": "closer", "name": "Closer", "role": "Jungle" },
+      { "id": "ssumday", "name": "Ssumday", "role": "Top" },
+      { "id": "tenacity", "name": "Tenacity", "role": "Mid" },
+      { "id": "doublelift", "name": "Doublelift", "role": "Bot" },
+      { "id": "huhi", "name": "Huhi", "role": "Support" }
+    ],
+    "unsungHero": {
+      "playerId": "closer",
+      "reason": "Closer's pathing has been quietly suffocating opponents — he doesn't show up in the highlight reel but he's why 100T's lanes are winning."
+    }
+  },
+  {
+    "id": "nrg",
+    "name": "NRG",
+    "abbreviation": "NRG",
+    "record": { "wins": 7, "losses": 7 },
+    "narrativeHook": "Talented individually, still searching for the cohesion that turns potential into results.",
+    "roster": [
+      { "id": "contractz", "name": "Contractz", "role": "Jungle" },
+      { "id": "palafox", "name": "Palafox", "role": "Mid" },
+      { "id": "thanatos", "name": "Thanatos", "role": "Top" },
+      { "id": "fbi", "name": "FBI", "role": "Bot" },
+      { "id": "ignar", "name": "Ignar", "role": "Support" }
+    ],
+    "unsungHero": {
+      "playerId": "ignar",
+      "reason": "Ignar is the only reason NRG's bot lane has looked playable — his roaming is the one consistent bright spot on a frustrating team."
+    }
+  },
+  {
+    "id": "eg",
+    "name": "Evil Geniuses",
+    "abbreviation": "EG",
+    "record": { "wins": 6, "losses": 8 },
+    "narrativeHook": "Inconsistency is their only constant — brilliant one week, puzzling the next.",
+    "roster": [
+      { "id": "inspired-eg", "name": "Inspired", "role": "Jungle" },
+      { "id": "impact-eg", "name": "Impact", "role": "Top" },
+      { "id": "jojo-eg", "name": "jojopyun", "role": "Mid" },
+      { "id": "kaori", "name": "Kaori", "role": "Bot" },
+      { "id": "vulcan", "name": "Vulcan", "role": "Support" }
+    ],
+    "unsungHero": {
+      "playerId": "vulcan",
+      "reason": "Vulcan is making losing look closer than it is — his engage timing is the one thing keeping EG in games they probably shouldn't be in."
+    }
+  },
+  {
+    "id": "dig",
+    "name": "Dignitas",
+    "abbreviation": "DIG",
+    "record": { "wins": 5, "losses": 9 },
+    "narrativeHook": "Playing with nothing to lose — and that might be exactly what makes them dangerous.",
+    "roster": [
+      { "id": "eyla", "name": "Eyla", "role": "Support" },
+      { "id": "canna", "name": "Canna", "role": "Top" },
+      { "id": "river", "name": "River", "role": "Jungle" },
+      { "id": "tomo", "name": "Tomo", "role": "Mid" },
+      { "id": "spawn", "name": "Spawn", "role": "Bot" }
+    ],
+    "unsungHero": {
+      "playerId": "canna",
+      "reason": "Canna is winning lane in games where nothing else is going right — the lone highlight on a team rebuilding its identity."
+    }
+  },
+  {
+    "id": "imt",
+    "name": "Immortals",
+    "abbreviation": "IMT",
+    "record": { "wins": 4, "losses": 10 },
+    "narrativeHook": "A young roster absorbing hard lessons — the foundation for something better is here.",
+    "roster": [
+      { "id": "kenvi", "name": "Kenvi", "role": "Jungle" },
+      { "id": "xerxe", "name": "Xerxe", "role": "Top" },
+      { "id": "v1per", "name": "V1per", "role": "Mid" },
+      { "id": "gori", "name": "Gori", "role": "Bot" },
+      { "id": "olleh", "name": "Olleh", "role": "Support" }
+    ],
+    "unsungHero": {
+      "playerId": "kenvi",
+      "reason": "Kenvi is competing every game despite the scoreboard — his effort in a rebuilding year is the only reason to watch Immortals with optimism."
+    }
+  }
+]

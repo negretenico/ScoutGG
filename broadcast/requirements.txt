@@ -1,0 +1,5 @@
+yt-dlp==2024.9.27
+openai-whisper==20240930
+psycopg2-binary==2.9.9
+pika==1.3.2
+python-dotenv==1.0.1

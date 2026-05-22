@@ -1,0 +1,56 @@
+[
+  {
+    "id": "inspired",
+    "name": "Inspired",
+    "role": "Jungle",
+    "team": "FlyQuest",
+    "teamId": "fly",
+    "stats": { "kda": 6.1, "wins": 11, "losses": 3, "recentForm": ["W", "W", "W", "W", "L"] },
+    "narrative": "Inspired is making a case for best jungler in the league right now. Methodical, creative, and quietly dominant — FlyQuest's run this split starts and ends with his pathing."
+  },
+  {
+    "id": "blaber",
+    "name": "Blaber",
+    "role": "Jungle",
+    "team": "Cloud9",
+    "teamId": "c9",
+    "stats": { "kda": 5.8, "wins": 10, "losses": 4, "recentForm": ["W", "W", "L", "W", "W"] },
+    "narrative": "Blaber is playing the best League of his career — his aggressive early pathing is setting the pace before most teams have woken up. When Cloud9 win, he's usually the reason why."
+  },
+  {
+    "id": "doublelift",
+    "name": "Doublelift",
+    "role": "Bot",
+    "team": "100 Thieves",
+    "teamId": "100t",
+    "stats": { "kda": 4.9, "wins": 8, "losses": 6, "recentForm": ["W", "W", "W", "L", "W"] },
+    "narrative": "The comeback story of the split. Doublelift looks reinvigorated — playing with a freedom that's infectious. Whether this is the last act or a genuine resurgence, it's worth watching."
+  },
+  {
+    "id": "corejj",
+    "name": "CoreJJ",
+    "role": "Support",
+    "team": "Team Liquid",
+    "teamId": "tl",
+    "stats": { "kda": 4.2, "wins": 9, "losses": 5, "recentForm": ["W", "L", "W", "W", "L"] },
+    "narrative": "The veteran presence that keeps Team Liquid competitive even when the team is off. CoreJJ doesn't win games by himself — he stops them from being lost."
+  },
+  {
+    "id": "busio",
+    "name": "Busio",
+    "role": "Support",
+    "team": "FlyQuest",
+    "teamId": "fly",
+    "stats": { "kda": 3.9, "wins": 11, "losses": 3, "recentForm": ["W", "W", "W", "W", "W"] },
+    "narrative": "Busio's vision control is the silent engine behind FlyQuest's dominant early games — rarely highlighted, always essential. The support player who makes everyone else look better."
+  },
+  {
+    "id": "jojopyun",
+    "name": "jojopyun",
+    "role": "Mid",
+    "team": "Cloud9",
+    "teamId": "c9",
+    "stats": { "kda": 5.2, "wins": 10, "losses": 4, "recentForm": ["W", "L", "W", "W", "W"] },
+    "narrative": "jojopyun has grown into one of the most dangerous mid laners in the LCS — his ability to create pressure across the map while staying ahead in lane is rare at any level."
+  }
+]

@@ -1,0 +1,20 @@
+.root {
+  padding: 48px 0;
+}
+
+.message {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  margin-bottom: 16px;
+}
+
+.retry {
+  appearance: none;
+  background: none;
+  border: none;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  color: var(--color-accent);
+  cursor: pointer;
+  padding: 0;
+}
