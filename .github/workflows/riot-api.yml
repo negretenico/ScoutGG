@@ -11,15 +11,20 @@ on:
 jobs:
   build:
     uses: negretenico/GithubWorkflows/.github/workflows/java_maven_build.yaml@main
+    permissions:
+      contents: read
+      packages: write
     with:
       working_directory: riot-api
       artifact_name: riot-api-jar
-      server_id: github-functionico
     secrets: inherit
 
   docker:
     needs: build
     uses: negretenico/GithubWorkflows/.github/workflows/docker_build.yaml@main
+    permissions:
+      contents: read
+      packages: write
     with:
       working_directory: riot-api
       service_name: riot-api
