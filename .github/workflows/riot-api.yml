@@ -14,6 +14,7 @@ jobs:
     with:
       working_directory: riot-api
       artifact_name: riot-api-jar
+      server_id: github-functionico
     secrets: inherit
 
   docker:

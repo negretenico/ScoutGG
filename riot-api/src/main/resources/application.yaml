@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: riot-api
+
+server:
+  port: 8080
+
+riot:
+  api:
+    base-url: https://esports-api.lolesports.com/persisted/gw
+  poll:
+    interval-ms: 600000
