@@ -35,7 +35,7 @@ class MatchDataServiceTest {
 
     @BeforeEach
     void setUp() {
-        service = new MatchDataService(esportsClient, livestatsClient, repository, rabbitTemplate);
+        service = new MatchDataService(esportsClient, livestatsClient, repository, rabbitTemplate, new GameDataMapper());
     }
 
     @Test
@@ -79,7 +79,7 @@ class MatchDataServiceTest {
 
     @Test
     void pullMatch_persistsPlayersAndPublishesMessages() {
-        var game = new Game("game-1", 1, "completed", "2026-05-24T20:00:00Z", List.of());
+        var game = new Game("game-1", 1, "completed", null, List.of());
         stubEventDetails("event-1", game);
         when(repository.existsByMatchId("game-1")).thenReturn(false);
 
@@ -97,7 +97,7 @@ class MatchDataServiceTest {
         service.pullMatch("event-1");
 
         @SuppressWarnings("unchecked")
-        ArgumentCaptor<java.util.List<RiotData>> savedCaptor = ArgumentCaptor.forClass(java.util.List.class);
+        ArgumentCaptor<List<RiotData>> savedCaptor = ArgumentCaptor.forClass(List.class);
         verify(repository).saveAll(savedCaptor.capture());
         List<RiotData> saved = savedCaptor.getValue();
         assertThat(saved).hasSize(2);
