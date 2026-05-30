@@ -9,7 +9,7 @@ infra-down:
 
 ## Module dev servers
 dev-riot:
-	cd riot-api && mvn spring-boot:run
+	cd riot-api && mvn spring-boot:run -Dspring-boot.run.profiles=local
 
 dev-server:
 	cd server && mvn spring-boot:run
