@@ -13,22 +13,17 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: frontend
 
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
+      - uses: oven-sh/setup-bun@v2
 
       - name: Install dependencies
-        run: rm -f package-lock.json && npm install
+        run: make setup-frontend
 
       - name: Test
-        run: npm run test:run
+        run: make test-frontend
 
       - name: Build static export
         if: github.event_name == 'push'
@@ -37,7 +32,7 @@ jobs:
           NEXT_PUBLIC_BASE_PATH: ${{ github.ref == 'refs/heads/main' && '/ScoutGG/prod' || '/ScoutGG/dev' }}
           NEXT_PUBLIC_USE_MOCKS: ${{ github.ref == 'refs/heads/main' && 'false' || 'true' }}
           NEXT_PUBLIC_API_URL: ${{ github.ref == 'refs/heads/main' && secrets.PROD_API_URL || secrets.DEV_API_URL }}
-        run: npm run build
+        run: make build-frontend
 
       - name: Deploy to GitHub Pages (dev)
         if: github.event_name == 'push' && github.ref == 'refs/heads/develop'

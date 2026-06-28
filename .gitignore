@@ -34,7 +34,7 @@ desktop.ini
 node_modules/
 npm-debug.log*
 .bun/
-bun.lockb
+package-lock.json
 
 # Java / Maven
 *.class
