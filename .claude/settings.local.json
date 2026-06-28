@@ -1,0 +1,37 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:hextechdocs.dev)",
+      "Bash(gh api:*)",
+      "Bash(base64 -d echo \"---\" gh api repos/negretenico/GithubWorkflows/contents/.github/workflows/docker_build.yaml --jq '.content')",
+      "Bash(gh issue:*)",
+      "Bash(bun install:*)",
+      "Bash(bun run:*)",
+      "Bash(bunx msw:*)",
+      "Bash(cd:*)",
+      "Bash(bun add:*)",
+      "Bash(npm install:*)",
+      "Bash(mvn test:*)",
+      "WebFetch(domain:esports-api.lolesports.com)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:lol.fandom.com)",
+      "WebFetch(domain:api.github.com)",
+      "WebSearch",
+      "Bash(mvn install:*)",
+      "WebFetch(domain:feed.lolesports.com)",
+      "WebFetch(domain:vickz84259.github.io)",
+      "Bash(./mvnw test:*)",
+      "Bash(curl -s -H \"x-api-key: 0TvQnueqKa5mxJntVWt0w4LpLfEkrV1Ta8rQBb9Z\" \"https://esports-api.lolesports.com/persisted/gw/getEventDetails?hl=en-US&id=115564793879469294\")",
+      "Bash(curl -s \"https://feed.lolesports.com/livestats/v1/window/115564793879469295\")",
+      "Bash(curl -s \"https://feed.lolesports.com/livestats/v1/window/115564793879469295?startingTime=2026-05-24T20:47:13Z\")",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\(json.dumps\\(d, indent=2\\)\\)\")",
+      "Bash(curl -s \"https://feed.lolesports.com/livestats/v1/window/115564793879469295?startingTime=2026-05-24T20:30:00Z\")",
+      "Bash(python3 -c \":*)",
+      "Bash(curl:*)",
+      "Bash(git:*)",
+      "Bash(python -c \"import sys,json; [print\\(f[''''name'''']\\) for f in json.load\\(sys.stdin\\)]\")",
+      "Bash(python -c \"import sys,json,base64; print\\(base64.b64decode\\(json.load\\(sys.stdin\\)[''''content'''']\\).decode\\(\\)\\)\")"
+    ]
+  }
+}

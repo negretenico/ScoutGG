@@ -2,11 +2,15 @@ name: Frontend CI
 
 on:
   push:
-    paths:
-      - 'frontend/**'
+    branches: [develop, main]
+    paths: ['frontend/**']
   pull_request:
-    paths:
-      - 'frontend/**'
+    paths: ['frontend/**']
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
 
 jobs:
   build:
@@ -33,10 +37,39 @@ jobs:
       - name: Test
         run: npm run test:run
 
-  docker:
+      - name: Build static export
+        if: github.event_name == 'push'
+        env:
+          NEXT_PUBLIC_STATIC_EXPORT: 'true'
+          NEXT_PUBLIC_BASE_PATH: ${{ github.ref == 'refs/heads/main' && '/ScoutGG/prod' || '/ScoutGG/dev' }}
+          NEXT_PUBLIC_USE_MOCKS: ${{ github.ref == 'refs/heads/main' && 'false' || 'true' }}
+          NEXT_PUBLIC_API_URL: ${{ github.ref == 'refs/heads/main' && secrets.PROD_API_URL || secrets.DEV_API_URL }}
+        run: npm run build
+
+      - name: Upload Pages artifact
+        if: github.event_name == 'push'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: frontend/out
+
+  deploy-dev:
     needs: build
-    uses: negretenico/GithubWorkflows/.github/workflows/docker_build.yaml@main
-    with:
-      working_directory: frontend
-      service_name: frontend
-    secrets: inherit
+    if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
+    environment:
+      name: dev
+      url: https://${{ github.repository_owner }}.github.io/ScoutGG/dev
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages (dev)
+        uses: actions/deploy-pages@v4
+
+  deploy-prod:
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    environment:
+      name: production
+      url: https://${{ github.repository_owner }}.github.io/ScoutGG/prod
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages (prod)
+        uses: actions/deploy-pages@v4

@@ -16,5 +16,9 @@ spring:
     username: ${RABBITMQ_USER}
     password: ${RABBITMQ_PASSWORD}
 
+riot:
+  poll:
+    interval-ms: 3600000  # 60 minutes — reduced load for dev environment
+
 admin:
   api-key: ${ADMIN_KEY}

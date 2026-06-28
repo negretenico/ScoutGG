@@ -2,23 +2,75 @@ name: Broadcast CI
 
 on:
   push:
-    paths:
-      - 'broadcast/**'
+    branches: [develop, main]
+    paths: ['broadcast/**']
   pull_request:
-    paths:
-      - 'broadcast/**'
+    paths: ['broadcast/**']
 
 jobs:
   build:
     uses: negretenico/GithubWorkflows/.github/workflows/python_build.yaml@main
     with:
       working_directory: broadcast
+      python_version: '3.12'
+      test_command: pytest --cov --cov-fail-under=85
+      skip_dist: true
     secrets: inherit
 
-  docker:
+  version:
     needs: build
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      version_suffix: ${{ steps.resolve.outputs.version_suffix }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-tags: true
+
+      - name: Resolve and tag version
+        id: resolve
+        run: |
+          LATEST=$(git tag -l "broadcast/v*.*.*" | sort -V | tail -n1)
+          BASE="${LATEST:-broadcast/v0.0.0}"; BASE="${BASE#broadcast/}"
+          IFS='.' read -r MAJOR MINOR PATCH <<< "${BASE#v}"
+          SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+
+          if [ "${{ github.ref }}" = "refs/heads/main" ]; then
+            NEXT="v${MAJOR}.${MINOR}.$((PATCH + 1))"
+            git tag "broadcast/${NEXT}"
+            git push origin "broadcast/${NEXT}"
+            echo "version_suffix=${NEXT}" >> "$GITHUB_OUTPUT"
+          else
+            echo "version_suffix=${BASE}-SNAPSHOT-${SHA}" >> "$GITHUB_OUTPUT"
+          fi
+
+  docker-dev:
+    needs: version
+    if: github.ref == 'refs/heads/develop'
+    environment: dev
     uses: negretenico/GithubWorkflows/.github/workflows/docker_build.yaml@main
+    permissions:
+      contents: read
+      packages: write
     with:
       working_directory: broadcast
       service_name: broadcast
+      version_suffix: ${{ needs.version.outputs.version_suffix }}
+    secrets: inherit
+
+  docker-prod:
+    needs: version
+    if: github.ref == 'refs/heads/main'
+    environment: production
+    uses: negretenico/GithubWorkflows/.github/workflows/docker_build.yaml@main
+    permissions:
+      contents: read
+      packages: write
+    with:
+      working_directory: broadcast
+      service_name: broadcast
+      version_suffix: ${{ needs.version.outputs.version_suffix }}
     secrets: inherit
