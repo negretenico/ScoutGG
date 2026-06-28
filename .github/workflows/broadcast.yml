@@ -13,6 +13,7 @@ jobs:
     with:
       working_directory: broadcast
       python_version: '3.12'
+      requirements_file: requirements-test.txt
       test_command: pytest --cov --cov-fail-under=85
       skip_dist: true
     secrets: inherit
@@ -50,7 +51,6 @@ jobs:
   docker-dev:
     needs: version
     if: github.ref == 'refs/heads/develop'
-    environment: dev
     uses: negretenico/GithubWorkflows/.github/workflows/docker_build.yaml@main
     permissions:
       contents: read
@@ -64,7 +64,6 @@ jobs:
   docker-prod:
     needs: version
     if: github.ref == 'refs/heads/main'
-    environment: production
     uses: negretenico/GithubWorkflows/.github/workflows/docker_build.yaml@main
     permissions:
       contents: read

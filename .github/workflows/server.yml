@@ -51,7 +51,6 @@ jobs:
   docker-dev:
     needs: version
     if: github.ref == 'refs/heads/develop'
-    environment: dev
     uses: negretenico/GithubWorkflows/.github/workflows/docker_build.yaml@main
     permissions:
       contents: read
@@ -66,7 +65,6 @@ jobs:
   docker-prod:
     needs: version
     if: github.ref == 'refs/heads/main'
-    environment: production
     uses: negretenico/GithubWorkflows/.github/workflows/docker_build.yaml@main
     permissions:
       contents: read
