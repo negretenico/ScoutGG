@@ -47,7 +47,9 @@
       "Bash(python -m venv /tmp/test-venv)",
       "Bash(/tmp/test-venv/bin/pip install:*)",
       "Bash(make test:*)",
-      "Bash(grep -n \"secrets\\\\.\\\\|environment:\" /c/Users/negre/Documents/projects/ScoutGG/.github/workflows/*.yml)"
+      "Bash(grep -n \"secrets\\\\.\\\\|environment:\" /c/Users/negre/Documents/projects/ScoutGG/.github/workflows/*.yml)",
+      "Bash(gh run:*)",
+      "Bash(xargs -I {} gh api \"repos/negretenico/ScoutGG/actions/workflows/{}/runs?per_page=1\" --jq '.workflow_runs[0] | {name, path}')"
     ]
   }
 }
