@@ -101,6 +101,23 @@ class TestGenerateNarrative:
         conn.commit.assert_called_once()
 
 
+class TestStartConsumer:
+    def test_declares_exchange_and_binds_queues(self):
+        channel = MagicMock()
+        connection = MagicMock()
+        connection.channel.return_value = channel
+
+        with patch("consumer.pika.BlockingConnection", return_value=connection):
+            from consumer import start_consumer
+            start_consumer()
+
+        channel.exchange_declare.assert_called_once_with(
+            exchange="scout.events", exchange_type="topic", durable=True)
+        assert channel.queue_bind.call_count == 2
+        channel.basic_consume.assert_called_once()
+        channel.start_consuming.assert_called_once()
+
+
 class TestOnMessage:
     def _make_channel(self):
         ch = MagicMock()

@@ -1,8 +1,8 @@
 import json
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, patch, call
 import pytest
 
-from worker import extract_signals, store_signals, publish_trigger
+from worker import extract_signals, store_signals, publish_trigger, transcribe_chunk, capture_chunk, run
 
 
 class TestExtractSignals:
@@ -65,6 +65,78 @@ class TestStoreSignals:
         store_signals("match-1", "player-1", {"sentiment": 0.5, "transcribed": []})
         cur.close.assert_called_once()
         conn.close.assert_called_once()
+
+
+class TestTranscribeChunk:
+    def test_returns_text_from_model(self):
+        import worker
+        worker.model.transcribe.return_value = {"text": "amazing teamfight"}
+        result = transcribe_chunk("/tmp/chunk.wav")
+        assert result == "amazing teamfight"
+
+    def test_passes_audio_path_to_model(self):
+        import worker
+        worker.model.transcribe.return_value = {"text": ""}
+        transcribe_chunk("/tmp/test.wav")
+        worker.model.transcribe.assert_called_with("/tmp/test.wav")
+
+
+class TestCaptureChunk:
+    @patch("worker.subprocess.run")
+    def test_calls_yt_dlp_with_url_and_duration(self, mock_run):
+        capture_chunk("https://youtube.com/stream", 30, "/tmp/out.wav")
+        mock_run.assert_called_once()
+        cmd = mock_run.call_args[0][0]
+        assert "yt-dlp" in cmd
+        assert "/tmp/out.wav" in cmd
+
+    @patch("worker.subprocess.run")
+    def test_raises_on_failure(self, mock_run):
+        import subprocess
+        mock_run.side_effect = subprocess.CalledProcessError(1, "yt-dlp")
+        with pytest.raises(subprocess.CalledProcessError):
+            capture_chunk("https://youtube.com/stream", 30, "/tmp/out.wav")
+
+
+class TestRun:
+    @patch("worker.time")
+    @patch("worker.publish_trigger")
+    @patch("worker.store_signals")
+    @patch("worker.transcribe_chunk", return_value="great play by Ruler")
+    @patch("worker.capture_chunk")
+    @patch("worker.pika.BlockingConnection")
+    def test_processes_one_chunk_then_stops(
+        self, mock_conn, mock_capture, mock_transcribe, mock_store, mock_publish, mock_time
+    ):
+        # Break the infinite loop after the first iteration
+        mock_time.sleep.side_effect = KeyboardInterrupt
+
+        with pytest.raises(KeyboardInterrupt):
+            run("match-99")
+
+        mock_capture.assert_called_once()
+        mock_transcribe.assert_called_once()
+        mock_store.assert_called_once()
+        mock_publish.assert_called_once()
+
+    @patch("worker.time")
+    @patch("worker.publish_trigger")
+    @patch("worker.store_signals")
+    @patch("worker.transcribe_chunk", side_effect=Exception("ffmpeg error"))
+    @patch("worker.capture_chunk")
+    @patch("worker.pika.BlockingConnection")
+    def test_continues_after_chunk_error(
+        self, mock_conn, mock_capture, mock_transcribe, mock_store, mock_publish, mock_time
+    ):
+        # First sleep continues, second breaks the loop
+        mock_time.sleep.side_effect = [None, KeyboardInterrupt]
+
+        with pytest.raises(KeyboardInterrupt):
+            run("match-99")
+
+        # store and publish never called due to error
+        mock_store.assert_not_called()
+        mock_publish.assert_not_called()
 
 
 class TestPublishTrigger:

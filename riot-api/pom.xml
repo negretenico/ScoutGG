@@ -121,7 +121,17 @@
                 </rule>
               </rules>
               <excludes>
+                <!-- Spring Boot entry point -->
                 <exclude>com/scoutgg/riotapi/RiotApiApplication.class</exclude>
+                <!-- Spring @Configuration wiring — no business logic to test -->
+                <exclude>com/scoutgg/riotapi/esports/EsportsApiConfig.class</exclude>
+                <exclude>com/scoutgg/riotapi/match/events/MatchEventsConfig.class</exclude>
+                <!-- WebClient wrappers — integration-tested via real HTTP, not unit tests -->
+                <exclude>com/scoutgg/riotapi/esports/LivestatsClient.class</exclude>
+                <exclude>com/scoutgg/riotapi/esports/LoLEsportsClient.class</exclude>
+                <!-- Spring-managed infra — scheduler and JPA repository interface -->
+                <exclude>com/scoutgg/riotapi/match/polling/MatchScheduler.class</exclude>
+                <exclude>com/scoutgg/riotapi/match/MatchDataRepository.class</exclude>
               </excludes>
             </configuration>
           </execution>

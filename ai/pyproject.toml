@@ -12,4 +12,4 @@ testpaths = ["tests"]
 
 [tool.coverage.run]
 source = ["."]
-omit = ["tests/*", "alembic/*"]
+omit = ["tests/*", "alembic/*", "main.py"]

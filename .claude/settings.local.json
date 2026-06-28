@@ -31,7 +31,23 @@
       "Bash(curl:*)",
       "Bash(git:*)",
       "Bash(python -c \"import sys,json; [print\\(f[''''name'''']\\) for f in json.load\\(sys.stdin\\)]\")",
-      "Bash(python -c \"import sys,json,base64; print\\(base64.b64decode\\(json.load\\(sys.stdin\\)[''''content'''']\\).decode\\(\\)\\)\")"
+      "Bash(python -c \"import sys,json,base64; print\\(base64.b64decode\\(json.load\\(sys.stdin\\)[''''content'''']\\).decode\\(\\)\\)\")",
+      "Bash(make test-server:*)",
+      "Bash(make test-frontend:*)",
+      "Bash(make test-riot:*)",
+      "Bash(make test-ai:*)",
+      "Bash(make test-broadcast:*)",
+      "Bash(xargs grep:*)",
+      "Bash(python -m pytest --version)",
+      "Bash(make setup-python:*)",
+      "Bash(pip install:*)",
+      "Bash(cat /c/Users/negre/Documents/projects/Quantica/marketanalysis/requirements*.txt)",
+      "Bash(find /c/Users/negre/Documents/projects/Quantica -name *.yml -path *github*)",
+      "Bash(make setup-ai:*)",
+      "Bash(python -m venv /tmp/test-venv)",
+      "Bash(/tmp/test-venv/bin/pip install:*)",
+      "Bash(make test:*)",
+      "Bash(grep -n \"secrets\\\\.\\\\|environment:\" /c/Users/negre/Documents/projects/ScoutGG/.github/workflows/*.yml)"
     ]
   }
 }

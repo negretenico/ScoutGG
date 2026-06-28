@@ -123,6 +123,75 @@ class MatchDataServiceTest {
         verify(repository, never()).saveAll(any());
     }
 
+    @Test
+    void pullMatch_handlesNullEventData() {
+        when(esportsClient.getEventDetails("event-1")).thenReturn(new EventDetailsResponse(null));
+
+        service.pullMatch("event-1");
+
+        verify(repository, never()).saveAll(any());
+    }
+
+    @Test
+    void pullMatch_skipsGameWhenInitialWindowIsNull() {
+        var game = new Game("game-1", 1, "completed", null, List.of());
+        stubEventDetails("event-1", game);
+        when(repository.existsByMatchId("game-1")).thenReturn(false);
+        when(livestatsClient.getWindow(eq("game-1"), isNull())).thenReturn(null);
+
+        service.pullMatch("event-1");
+
+        verify(repository, never()).saveAll(any());
+    }
+
+    @Test
+    void pullMatch_skipsGameWhenInitialWindowHasNoFrames() {
+        var game = new Game("game-1", 1, "completed", null, List.of());
+        stubEventDetails("event-1", game);
+        when(repository.existsByMatchId("game-1")).thenReturn(false);
+        when(livestatsClient.getWindow(eq("game-1"), isNull()))
+                .thenReturn(new LivestatsWindowResponse("game-1", null, List.of()));
+
+        service.pullMatch("event-1");
+
+        verify(repository, never()).saveAll(any());
+    }
+
+    @Test
+    void pullMatch_skipsGameWhenFinalWindowIsNull() {
+        var game = new Game("game-1", 1, "completed", null, List.of());
+        stubEventDetails("event-1", game);
+        when(repository.existsByMatchId("game-1")).thenReturn(false);
+
+        var frame = new WindowFrame("2026-05-24T20:12:10Z",
+                new TeamFrame(List.of()), new TeamFrame(List.of()));
+        var initialWindow = new LivestatsWindowResponse("game-1", null, List.of(frame, frame, frame));
+        when(livestatsClient.getWindow(eq("game-1"), isNull())).thenReturn(initialWindow);
+        when(livestatsClient.getWindow(eq("game-1"), notNull())).thenReturn(null);
+
+        service.pullMatch("event-1");
+
+        verify(repository, never()).saveAll(any());
+    }
+
+    @Test
+    void pullMatch_skipsGameWhenFinalWindowHasNoFrames() {
+        var game = new Game("game-1", 1, "completed", null, List.of());
+        stubEventDetails("event-1", game);
+        when(repository.existsByMatchId("game-1")).thenReturn(false);
+
+        var frame = new WindowFrame("2026-05-24T20:12:10Z",
+                new TeamFrame(List.of()), new TeamFrame(List.of()));
+        var initialWindow = new LivestatsWindowResponse("game-1", null, List.of(frame, frame, frame));
+        when(livestatsClient.getWindow(eq("game-1"), isNull())).thenReturn(initialWindow);
+        when(livestatsClient.getWindow(eq("game-1"), notNull()))
+                .thenReturn(new LivestatsWindowResponse("game-1", null, List.of()));
+
+        service.pullMatch("event-1");
+
+        verify(repository, never()).saveAll(any());
+    }
+
     private void stubEventDetails(String eventId, Game game) {
         var eventDetails = new EventDetailsResponse(
                 new EventData(new EventDetails(eventId, new EventMatch(List.of(game)))));
