@@ -70,6 +70,14 @@
 
   <repositories>
     <repository>
+      <id>github</id>
+      <name>GitHub Packages</name>
+      <url>https://maven.pkg.github.com/negretenico/ScoutGG</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+    <repository>
       <id>github-functionico</id>
       <name>GitHub Packages - Functionico</name>
       <url>https://maven.pkg.github.com/negretenico/functionico</url>
