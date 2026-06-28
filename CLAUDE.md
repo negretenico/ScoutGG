@@ -51,27 +51,72 @@ Out: accounts, following, notifications, mobile, non-LCS leagues, social sharing
 
 ## Commands
 
+All commands go through `make`. The Makefile is the single source of truth for both CI and local dev.
+
 ```bash
-# Install
-npm install
+# Install deps (run once per module)
+make setup-frontend      # bun install
+make setup-ai            # python venv + pip
+make setup-broadcast     # python venv + pip
 
-# Dev
-npm run dev
+# Dev servers
+make dev-frontend
+make dev-riot
+make dev-server
+make dev-ai
+make dev-broadcast
 
-# Test
-npm test
+# Build all modules
+make build
 
-# Lint
-npm run lint
+# Test all modules
+make test
+
+# Per-module
+make build-riot | build-server | build-ai | build-broadcast | build-frontend
+make test-riot  | test-server  | test-ai  | test-broadcast  | test-frontend
 ```
+
+**Frontend uses Bun** (not npm). `bun.lockb` is committed, `package-lock.json` is gitignored.
+
+## CI/CD Conventions
+
+Reusable workflows live in `negretenico/GithubWorkflows`. CI files in this repo are callers only.
+
+### Rules
+- **Never add `environment:` to jobs that use `uses:`** — GitHub Actions doesn't support it; causes instant `startup_failure`.
+- **Boolean inputs must be unquoted** — `skip_dist: true`, not `skip_dist: 'true'`.
+- **`mvn deploy` is opt-in** — pass `publish: true` to `java_maven_build.yaml` only when you want to publish to GitHub Packages. Default is `false`.
+- **Maven cross-repo auth** — add a `<repository id="github">` pointing to `maven.pkg.github.com/negretenico/ScoutGG` in any pom.xml that pulls from GitHub Packages. `setup-java` configures credentials for server id `github`; GitHub resolves packages cross-repo under the same owner.
+- **Python services set `skip_dist: true`** — they're deployed as Docker images, not packages.
+- **Build Gate** (`build-gate.yml`) is the single required check for branch protection. It passes on `pull_request` and re-runs via `workflow_run` when module CIs complete.
+- **`workflow_run` only fires from the default branch** — build-gate won't work on feature branches until merged to main.
+
+### GitHub Pages
+- Deployed via `peaceiris/actions-gh-pages@v4` with `keep_files: true`.
+- `develop` → `/dev` subfolder, `main` → `/prod` subfolder.
+- Both coexist on the `gh-pages` branch.
 
 ## Agents
 
-Use the agents in `.claude/agents/` for focused work:
+Specialized subagents in `.claude/agents/`. Invoke by name or with `/`:
 
-- `/product-guardian` — scope, vision, user truth
-- `/api-specialist` — Riot API, Claude API, Whisper, YouTube/Twitch
-- `/ux-guardian` — frontend, components, design principle enforcement
+| Agent | When to use |
+|---|---|
+| `/product-guardian` | Scope decisions, MVP vs post-MVP, anything that risks feature creep |
+| `/api-specialist` | Riot API, Claude API, Whisper, YouTube/Twitch — rate limits, auth, gotchas |
+| `/ux-guardian` | Components, layouts, interaction design — enforces "one story at a time" on every pixel |
+
+## Skills
+
+Reusable slash commands in `.claude/skills/`. Invoke with `/`:
+
+| Skill | When to use |
+|---|---|
+| `/create-github-issues` | Create GitHub issues from the roadmap file |
+| `/generate-narrative` | Generate a player or team narrative via the Claude API |
+| `/riot-api-query` | Fetch player stats, match history, rosters, standings from Riot/LoL Esports API |
+| `/grill-me` | Stress-test a plan or design with relentless questioning |
 
 ## External APIs
 
