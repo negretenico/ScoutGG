@@ -1,4 +1,9 @@
 services:
+
+  # ── Infrastructure ──────────────────────────────────────────────────────────
+  # Run with: docker compose up
+  # Add app services with: docker compose --profile app up
+
   postgres:
     image: postgres:16
     environment:
@@ -14,7 +19,81 @@ services:
     image: rabbitmq:3-management
     ports:
       - "5672:5672"
-      - "15672:15672"  # management UI
+      - "15672:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── Application Services ────────────────────────────────────────────────────
+
+  riot-api:
+    profiles: [app]
+    image: ghcr.io/negretenico/scoutgg/riot-api:${RIOT_API_VERSION:-latest}
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILE:-dev}
+      DB_HOST: postgres
+      DB_USER: scoutgg
+      DB_PASSWORD: scoutgg
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_USER: guest
+      RABBITMQ_PASSWORD: guest
+      ADMIN_KEY: ${ADMIN_KEY:-dev-admin-key}
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy
+
+  server:
+    profiles: [app]
+    image: ghcr.io/negretenico/scoutgg/server:${SERVER_VERSION:-latest}
+    environment:
+      DB_HOST: postgres
+      DB_USER: scoutgg
+      DB_PASSWORD: scoutgg
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3000}
+    ports:
+      - "8082:8082"
+    depends_on:
+      postgres:
+        condition: service_started
+
+  ai:
+    profiles: [app]
+    image: ghcr.io/negretenico/scoutgg/ai:${AI_VERSION:-latest}
+    environment:
+      DATABASE_URL: postgresql://scoutgg:scoutgg@postgres:5432/scoutgg
+      RABBITMQ_HOST: rabbitmq
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+    depends_on:
+      postgres:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy
+
+  broadcast:
+    profiles: [app]
+    image: ghcr.io/negretenico/scoutgg/broadcast:${BROADCAST_VERSION:-latest}
+    environment:
+      DATABASE_URL: postgresql://scoutgg:scoutgg@postgres:5432/scoutgg
+      RABBITMQ_HOST: rabbitmq
+      LCS_STREAM_URL: ${LCS_STREAM_URL:-}
+      MATCH_ID: ${MATCH_ID:-debug-match}
+    depends_on:
+      postgres:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy
+
+  frontend:
+    profiles: [app]
+    image: ghcr.io/negretenico/scoutgg/frontend:${FRONTEND_VERSION:-latest}
+    ports:
+      - "3000:80"
 
 volumes:
   postgres_data:

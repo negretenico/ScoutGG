@@ -2,25 +2,76 @@ name: Server CI
 
 on:
   push:
-    paths:
-      - 'server/**'
+    branches: [develop, main]
+    paths: ['server/**']
   pull_request:
-    paths:
-      - 'server/**'
+    paths: ['server/**']
 
 jobs:
   build:
     uses: negretenico/GithubWorkflows/.github/workflows/java_maven_build.yaml@main
+    permissions:
+      contents: read
+      packages: write
     with:
       working_directory: server
       artifact_name: server-jar
     secrets: inherit
 
-  docker:
+  version:
     needs: build
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      version_suffix: ${{ steps.resolve.outputs.version_suffix }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-tags: true
+
+      - name: Resolve and tag version
+        id: resolve
+        run: |
+          LATEST=$(git tag -l "server/v*.*.*" | sort -V | tail -n1)
+          BASE="${LATEST:-server/v0.0.0}"; BASE="${BASE#server/}"
+          IFS='.' read -r MAJOR MINOR PATCH <<< "${BASE#v}"
+          SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+
+          if [ "${{ github.ref }}" = "refs/heads/main" ]; then
+            NEXT="v${MAJOR}.${MINOR}.$((PATCH + 1))"
+            git tag "server/${NEXT}"
+            git push origin "server/${NEXT}"
+            echo "version_suffix=${NEXT}" >> "$GITHUB_OUTPUT"
+          else
+            echo "version_suffix=${BASE}-SNAPSHOT-${SHA}" >> "$GITHUB_OUTPUT"
+          fi
+
+  docker-dev:
+    needs: version
+    if: github.ref == 'refs/heads/develop'
     uses: negretenico/GithubWorkflows/.github/workflows/docker_build.yaml@main
+    permissions:
+      contents: read
+      packages: write
     with:
       working_directory: server
       service_name: server
       artifact_name: server-jar
+      version_suffix: ${{ needs.version.outputs.version_suffix }}
+    secrets: inherit
+
+  docker-prod:
+    needs: version
+    if: github.ref == 'refs/heads/main'
+    uses: negretenico/GithubWorkflows/.github/workflows/docker_build.yaml@main
+    permissions:
+      contents: read
+      packages: write
+    with:
+      working_directory: server
+      service_name: server
+      artifact_name: server-jar
+      version_suffix: ${{ needs.version.outputs.version_suffix }}
     secrets: inherit

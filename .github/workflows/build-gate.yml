@@ -1,0 +1,31 @@
+name: Build Gate
+
+on:
+  pull_request:
+  workflow_run:
+    workflows:
+      - Riot API CI
+      - Server CI
+      - AI CI
+      - Broadcast CI
+      - Frontend CI
+    types: [completed]
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Module CI result
+        if: github.event_name == 'workflow_run'
+        run: |
+          conclusion="${{ github.event.workflow_run.conclusion }}"
+          name="${{ github.event.workflow_run.name }}"
+          if [[ "$conclusion" == "failure" || "$conclusion" == "cancelled" ]]; then
+            echo "::error::$name $conclusion"
+            exit 1
+          fi
+          echo "$name $conclusion"
+
+      - name: PR opened or updated
+        if: github.event_name == 'pull_request'
+        run: echo "Build gate initialized"

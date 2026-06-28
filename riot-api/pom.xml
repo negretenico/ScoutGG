@@ -48,6 +48,14 @@
       <scope>runtime</scope>
     </dependency>
     <dependency>
+      <groupId>org.flywaydb</groupId>
+      <artifactId>flyway-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.flywaydb</groupId>
+      <artifactId>flyway-database-postgresql</artifactId>
+    </dependency>
+    <dependency>
       <groupId>com.common</groupId>
       <artifactId>functionico</artifactId>
       <version>0.0.2-SNAPSHOT</version>
@@ -61,6 +69,14 @@
   </dependencies>
 
   <repositories>
+    <repository>
+      <id>github</id>
+      <name>GitHub Packages</name>
+      <url>https://maven.pkg.github.com/negretenico/ScoutGG</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
     <repository>
       <id>github-functionico</id>
       <name>GitHub Packages - Functionico</name>
@@ -76,6 +92,58 @@
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>prepare-agent</id>
+            <goals><goal>prepare-agent</goal></goals>
+          </execution>
+          <execution>
+            <id>report</id>
+            <phase>verify</phase>
+            <goals><goal>report</goal></goals>
+          </execution>
+          <execution>
+            <id>check</id>
+            <phase>verify</phase>
+            <goals><goal>check</goal></goals>
+            <configuration>
+              <rules>
+                <rule>
+                  <element>BUNDLE</element>
+                  <limits>
+                    <limit>
+                      <counter>LINE</counter>
+                      <value>COVEREDRATIO</value>
+                      <minimum>0.85</minimum>
+                    </limit>
+                    <limit>
+                      <counter>BRANCH</counter>
+                      <value>COVEREDRATIO</value>
+                      <minimum>0.85</minimum>
+                    </limit>
+                  </limits>
+                </rule>
+              </rules>
+              <excludes>
+                <!-- Spring Boot entry point -->
+                <exclude>com/scoutgg/riotapi/RiotApiApplication.class</exclude>
+                <!-- Spring @Configuration wiring — no business logic to test -->
+                <exclude>com/scoutgg/riotapi/esports/EsportsApiConfig.class</exclude>
+                <exclude>com/scoutgg/riotapi/match/events/MatchEventsConfig.class</exclude>
+                <!-- WebClient wrappers — integration-tested via real HTTP, not unit tests -->
+                <exclude>com/scoutgg/riotapi/esports/LivestatsClient.class</exclude>
+                <exclude>com/scoutgg/riotapi/esports/LoLEsportsClient.class</exclude>
+                <!-- Spring-managed infra — scheduler and JPA repository interface -->
+                <exclude>com/scoutgg/riotapi/match/polling/MatchScheduler.class</exclude>
+                <exclude>com/scoutgg/riotapi/match/MatchDataRepository.class</exclude>
+              </excludes>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>

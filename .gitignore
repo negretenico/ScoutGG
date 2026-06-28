@@ -34,7 +34,7 @@ desktop.ini
 node_modules/
 npm-debug.log*
 .bun/
-bun.lockb
+package-lock.json
 
 # Java / Maven
 *.class
@@ -49,6 +49,4 @@ frontend/out/
 frontend/dist/
 
 # AI agent tooling (local only — skills-lock.json and SKILL.md are committed, not these)
-.agents/
-.claude/
 data/*
