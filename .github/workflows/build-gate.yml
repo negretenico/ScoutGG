@@ -15,17 +15,56 @@ jobs:
   gate:
     runs-on: ubuntu-latest
     steps:
-      - name: Module CI result
-        if: github.event_name == 'workflow_run'
-        run: |
-          conclusion="${{ github.event.workflow_run.conclusion }}"
-          name="${{ github.event.workflow_run.name }}"
-          if [[ "$conclusion" == "failure" || "$conclusion" == "cancelled" ]]; then
-            echo "::error::$name $conclusion"
-            exit 1
-          fi
-          echo "$name $conclusion"
-
-      - name: PR opened or updated
+      - uses: actions/checkout@v4
         if: github.event_name == 'pull_request'
-        run: echo "Build gate initialized"
+        with:
+          fetch-depth: 0
+
+      - name: Gate
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const MODULE_CIS = ['Riot API CI', 'Server CI', 'AI CI', 'Broadcast CI', 'Frontend CI']
+            const MODULE_PATHS = /^(frontend|riot-api|server|ai|broadcast)\//
+
+            if (context.eventName === 'pull_request') {
+              const { execSync } = require('child_process')
+              const base = context.payload.pull_request.base.ref
+              const changed = execSync(`git diff --name-only origin/${base}...HEAD`).toString()
+
+              if (!MODULE_PATHS.test(changed)) {
+                console.log('No module files changed — gate passes')
+                return
+              }
+            }
+
+            const sha = context.eventName === 'pull_request'
+              ? context.payload.pull_request.head.sha
+              : context.payload.workflow_run.head_sha
+
+            const { data } = await github.rest.actions.listWorkflowRunsForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              head_sha: sha,
+              per_page: 100,
+            })
+
+            const relevant = data.workflow_runs.filter(r => MODULE_CIS.includes(r.name))
+
+            if (relevant.length === 0) {
+              core.setFailed('Module files changed but no module CIs have started yet')
+              return
+            }
+
+            const failed = relevant.filter(r =>
+              r.status === 'completed' && (r.conclusion === 'failure' || r.conclusion === 'cancelled')
+            )
+            const pending = relevant.filter(r => r.status !== 'completed')
+
+            if (failed.length > 0) {
+              core.setFailed(`Failed: ${failed.map(r => r.name).join(', ')}`)
+            } else if (pending.length > 0) {
+              core.setFailed(`Still running: ${pending.map(r => r.name).join(', ')}`)
+            } else {
+              console.log(`All passed: ${relevant.map(r => r.name).join(', ')}`)
+            }
