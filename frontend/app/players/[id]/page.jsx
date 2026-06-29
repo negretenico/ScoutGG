@@ -1,5 +1,7 @@
 import dynamic from 'next/dynamic'
 
+export function generateStaticParams() { return [] }
+
 const PlayerProfile = dynamic(() => import('../../../components/PlayerProfile/index.jsx'), { ssr: false })
 
 export default function Page({ params }) {
