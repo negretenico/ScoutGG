@@ -38,10 +38,40 @@ jobs:
               }
             }
 
-            const sha = context.eventName === 'pull_request'
-              ? context.payload.pull_request.head.sha
-              : context.payload.workflow_run.head_sha
+            // On workflow_run, trust the event payload for the triggering CI — don't re-query it
+            // to avoid API eventual-consistency race conditions.
+            if (context.eventName === 'workflow_run') {
+              const { conclusion, name, head_sha: sha } = context.payload.workflow_run
 
+              if (conclusion === 'failure' || conclusion === 'cancelled') {
+                core.setFailed(`${name} ${conclusion}`)
+                return
+              }
+
+              // Check if any OTHER module CIs ran on this SHA and are pending/failed
+              const { data } = await github.rest.actions.listWorkflowRunsForRepo({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                head_sha: sha,
+                per_page: 100,
+              })
+
+              const others = data.workflow_runs.filter(r => MODULE_CIS.includes(r.name) && r.name !== name)
+              const failed = others.filter(r => r.status === 'completed' && (r.conclusion === 'failure' || r.conclusion === 'cancelled'))
+              const pending = others.filter(r => r.status !== 'completed')
+
+              if (failed.length > 0) {
+                core.setFailed(`Failed: ${failed.map(r => r.name).join(', ')}`)
+              } else if (pending.length > 0) {
+                core.setFailed(`Still running: ${pending.map(r => r.name).join(', ')}`)
+              } else {
+                console.log(`All passed`)
+              }
+              return
+            }
+
+            // pull_request path: query all module CIs for this SHA
+            const sha = context.payload.pull_request.head.sha
             const { data } = await github.rest.actions.listWorkflowRunsForRepo({
               owner: context.repo.owner,
               repo: context.repo.repo,
