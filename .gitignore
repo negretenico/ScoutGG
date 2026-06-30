@@ -48,6 +48,6 @@ frontend/.next/
 frontend/out/
 frontend/dist/
 
-.claude\settings.local.json
+.claude/settings.local.json
 # AI agent tooling (local only — skills-lock.json and SKILL.md are committed, not these)
 data/*

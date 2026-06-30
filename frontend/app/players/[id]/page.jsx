@@ -1,6 +1,6 @@
 import dynamic from 'next/dynamic'
 
-export function generateStaticParams() { return [] }
+export function generateStaticParams() { return [{ id: '_' }] }
 
 const PlayerProfile = dynamic(() => import('../../../components/PlayerProfile/index.jsx'), { ssr: false })
 

@@ -1,7 +1,7 @@
 .PHONY: infra infra-down \
         dev-riot dev-server dev-ai dev-broadcast dev-frontend \
         setup-ai setup-broadcast setup-frontend \
-        build build-riot build-server build-ai build-broadcast build-frontend \
+        build build-riot build-server build-ai build-broadcast build-frontend build-frontend-dev \
         test test-riot test-server test-ai test-broadcast test-frontend
 
 ## Local infrastructure (Postgres + RabbitMQ)
@@ -55,6 +55,13 @@ build-broadcast:
 	cd broadcast && python -m build
 
 build-frontend:
+	cd frontend && bun run build
+
+build-frontend-dev: export MSYS_NO_PATHCONV := 1
+build-frontend-dev: export NEXT_PUBLIC_STATIC_EXPORT := true
+build-frontend-dev: export NEXT_PUBLIC_BASE_PATH := /ScoutGG/dev
+build-frontend-dev: export NEXT_PUBLIC_USE_MOCKS := true
+build-frontend-dev:
 	cd frontend && bun run build
 
 ## Tests
